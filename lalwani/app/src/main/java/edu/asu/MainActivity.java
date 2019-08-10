@@ -1,4 +1,4 @@
-package com.example.a5;
+package edu.asu;
 
 import android.Manifest;
 import android.content.Context;
@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     RadioButton radioBtnHungry;
     RadioButton radioBtnAbout;
     RadioButton radioBtnHeadache;
+    Button collectButton;
 
     private SensorManager accelManage;
     private Sensor senseAccel;
@@ -100,11 +101,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         });
 
-        final Button stopButton = (Button) findViewById(R.id.stopButtonID);
-        stopButton.setOnClickListener(new View.OnClickListener() {
+        final Button predictButton = (Button) findViewById(R.id.predictBtnID);
+        predictButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                stopGraph(v);
+                predict();
             }
         });
 
@@ -204,6 +205,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     public void collectData(View view) {
+
+        if(isRunning) {
+            stopGraph();
+
+        }
         int gestureType = -1;
 
         if(radioBtnCop.isSelected())
@@ -230,7 +236,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         accelManage.registerListener(MainActivity.this, senseGyro, /*accelManage.SENSOR_DELAY_NORMAL*/SensorManager.SENSOR_DELAY_NORMAL);
     }
 
-    public void stopGraph(View view) {
+    public void stopGraph() {
         accelManage.unregisterListener(this);
 
         graphX.removeAllSeries();
@@ -357,5 +363,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         graphGyroZ.addSeries(seriesZ);
     }
 
+    private void predict(){
+        
+    }
 }
 

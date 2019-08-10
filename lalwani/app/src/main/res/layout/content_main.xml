@@ -17,7 +17,7 @@
         android:layout_marginTop="8dp"
         android:text="@string/btn_prev"
         app:layout_constraintStart_toEndOf="@+id/txtViewSampleId"
-        app:layout_constraintTop_toBottomOf="@+id/stopButtonID" />
+        app:layout_constraintTop_toBottomOf="@+id/predictBtnID" />
 
     <Button
         android:id="@+id/startButtonID"
@@ -32,7 +32,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/stopButtonID"
+        android:id="@+id/predictBtnID"
         android:layout_width="71dp"
         android:layout_height="36dp"
         android:layout_marginStart="4dp"
@@ -178,7 +178,7 @@
         android:layout_height="79dp"
         android:layout_marginStart="28dp"
         android:layout_marginTop="4dp"
-        app:layout_constraintStart_toEndOf="@+id/stopButtonID"
+        app:layout_constraintStart_toEndOf="@+id/predictBtnID"
         app:layout_constraintTop_toTopOf="parent">
 
         <RadioButton
@@ -228,7 +228,7 @@
         android:layout_marginTop="8dp"
         android:text="@string/btn_next"
         app:layout_constraintStart_toEndOf="@+id/btnPrev"
-        app:layout_constraintTop_toBottomOf="@+id/stopButtonID" /><![CDATA[
+        app:layout_constraintTop_toBottomOf="@+id/predictBtnID" /><![CDATA[
 
     />
 

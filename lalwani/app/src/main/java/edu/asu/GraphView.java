@@ -1,4 +1,4 @@
-package com.example.a5;//add your own package name
+package edu.asu;//add your own package name
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
