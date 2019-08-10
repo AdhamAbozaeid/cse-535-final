@@ -30,4 +30,21 @@ public class Gesture{
         mGyroY.add(y);
         mGyroZ.add(z);
     }
+
+    public boolean isAbout(){
+        return true;
+    }
+
+    public boolean isCop(){
+        return true;
+    }
+
+    public boolean isHungry(){
+        return true;
+    }
+
+    public boolean isHeadache(){
+        return true;
+    }
+
 }

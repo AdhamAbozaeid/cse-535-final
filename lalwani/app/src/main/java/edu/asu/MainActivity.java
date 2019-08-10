@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Vibrator;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -43,16 +44,23 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     GraphView graphGyroY;
     GraphView graphGyroZ;
 
-    Gesture currGesture[] = new Gesture[NUM_GESTURE_SAMPLES];
+    Gesture gestures[] = new Gesture[NUM_GESTURE_SAMPLES];
     int gestureIdx = 0;
 
     TextView txtViewSampleID;
+    TextView txtViewTruePos;
+    TextView txtViewFalsePos;
     RadioGroup radioGroup;
     RadioButton radioBtnCop;
     RadioButton radioBtnHungry;
     RadioButton radioBtnAbout;
     RadioButton radioBtnHeadache;
-    Button collectButton;
+    Button collectBtn;
+    CheckBox chckBoxCop;
+    CheckBox chckBoxHungry;
+    CheckBox chckBoxAbout;
+    CheckBox chckBoxHeadache;
+
 
     private SensorManager accelManage;
     private Sensor senseAccel;
@@ -71,11 +79,17 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         setSupportActionBar(toolbar);
 
         txtViewSampleID = (TextView)findViewById(R.id.txtViewSampleId);
+        txtViewTruePos = (TextView)findViewById(R.id.txtViewTP);
+        txtViewFalsePos = (TextView)findViewById(R.id.txtViewFP);
         radioGroup = (RadioGroup)findViewById(R.id.radioGroup);
         radioBtnCop = (RadioButton) findViewById(R.id.radioBtnCop);
         radioBtnHungry = (RadioButton) findViewById(R.id.radioBtnHungry);
         radioBtnAbout = (RadioButton) findViewById(R.id.radioBtnAbout);
         radioBtnHeadache = (RadioButton) findViewById(R.id.radioBtnHeadache);
+        chckBoxCop = (CheckBox) findViewById(R.id.chckBoxCop);
+        chckBoxHungry = (CheckBox) findViewById(R.id.chckBoxHungry);
+        chckBoxHeadache = (CheckBox) findViewById(R.id.chckBoxHeadache);
+        chckBoxAbout = (CheckBox) findViewById(R.id.chckBoxAbout);
 
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.VIBRATE)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -93,8 +107,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
 
         // Add Start button onClick listener
-        final Button startButton = (Button) findViewById(R.id.startButtonID);
-        startButton.setOnClickListener(new View.OnClickListener() {
+        collectBtn = (Button) findViewById(R.id.CollectBtnID);
+        collectBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 collectData(v);
@@ -208,18 +222,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         if(isRunning) {
             stopGraph();
-
+            isRunning = false;
+            collectBtn.setText("Collect");
+            return;
         }
         int gestureType = -1;
-
-        if(radioBtnCop.isSelected())
-            gestureType = Gesture.GESTURE_TYPE_COP;
-        else if(radioBtnHungry.isSelected())
-            gestureType = Gesture.GESTURE_TYPE_HUNGRY;
-        else if(radioBtnHeadache.isSelected())
-            gestureType = Gesture.GESTURE_TYPE_HEADACHE;
-        else if(radioBtnAbout.isSelected())
-            gestureType = Gesture.GESTURE_TYPE_ABOUT;
 
         View selectedRadioButton = findViewById(radioGroup.getCheckedRadioButtonId());
         gestureType = radioGroup.indexOfChild(selectedRadioButton);
@@ -229,7 +236,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             return;
         }
 
-        currGesture[gestureIdx] = new Gesture(gestureType);
+        isRunning = true;
+        collectBtn.setText("Stop");
+        gestures[gestureIdx] = new Gesture(gestureType);
         Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         v.vibrate(500);
         accelManage.registerListener(MainActivity.this, senseAccel, /*accelManage.SENSOR_DELAY_NORMAL*/SensorManager.SENSOR_DELAY_NORMAL);
@@ -298,7 +307,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 timestamps[index-1] = currTimestamp;
             }*/
         } else if(mySensor.getType() == Sensor.TYPE_GYROSCOPE) {
-            currGesture[gestureIdx].addAccelSample(sensorEvent.values[0], sensorEvent.values[1],sensorEvent.values[2]);
+            gestures[gestureIdx].addAccelSample(sensorEvent.values[0], sensorEvent.values[1],sensorEvent.values[2]);
         }
     }
 
@@ -319,52 +328,96 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         graphGyroZ.removeAllSeries();
 
         txtViewSampleID.setText("Sample " + (gestureIdx+1));
-        if(currGesture[gestureIdx] == null) {
+        if(gestures[gestureIdx] == null) {
             radioGroup.clearCheck();
+            chckBoxCop.setChecked(false);
+            chckBoxHungry.setChecked(false);
+            chckBoxHeadache.setChecked(false);
+            chckBoxAbout.setChecked(false);
             return;
         }
 
-        switch(currGesture[gestureIdx].mgestureType) {
-            case Gesture.GESTURE_TYPE_COP:
-                radioBtnCop.setSelected(true);
-                break;
-            case Gesture.GESTURE_TYPE_HUNGRY:
-                radioBtnHungry.setSelected(true);
-                break;
-            case Gesture.GESTURE_TYPE_ABOUT:
-                radioBtnAbout.setSelected(true);
-                break;
-            case Gesture.GESTURE_TYPE_HEADACHE:
-                radioBtnHeadache.setSelected(true);
-                break;
-        }
+        radioGroup.check(radioGroup.getChildAt(gestures[gestureIdx].mgestureType).getId());
 
         // Build new series for the updated hrValues
-        for(int i = 0; i<currGesture[gestureIdx].mGyroX.size(); i++) {
-            seriesX.appendData(new DataPoint(i, currGesture[gestureIdx].mGyroX.get(i)), true, currGesture[gestureIdx].mGyroX.size());
-            seriesY.appendData(new DataPoint(i, currGesture[gestureIdx].mGyroY.get(i)), true, currGesture[gestureIdx].mGyroY.size());
-            seriesZ.appendData(new DataPoint(i, currGesture[gestureIdx].mGyroZ.get(i)), true, currGesture[gestureIdx].mGyroZ.size());
+        for(int i = 0; i< gestures[gestureIdx].mGyroX.size(); i++) {
+            seriesX.appendData(new DataPoint(i, gestures[gestureIdx].mGyroX.get(i)), true, gestures[gestureIdx].mGyroX.size());
+            seriesY.appendData(new DataPoint(i, gestures[gestureIdx].mGyroY.get(i)), true, gestures[gestureIdx].mGyroY.size());
+            seriesZ.appendData(new DataPoint(i, gestures[gestureIdx].mGyroZ.get(i)), true, gestures[gestureIdx].mGyroZ.size());
         }
 
         // Update the X axis range
         graphGyroX.getViewport().setMinX(0);
-        graphGyroX.getViewport().setMaxX(currGesture[gestureIdx].mGyroX.size());
+        graphGyroX.getViewport().setMaxX(gestures[gestureIdx].mGyroX.size());
         // Add the new series to the graph
         graphGyroX.addSeries(seriesX);
 
         graphGyroY.getViewport().setMinX(0);
-        graphGyroY.getViewport().setMaxX(currGesture[gestureIdx].mGyroY.size());
+        graphGyroY.getViewport().setMaxX(gestures[gestureIdx].mGyroY.size());
         // Add the new series to the graph
         graphGyroY.addSeries(seriesY);
 
         graphGyroZ.getViewport().setMinX(0);
-        graphGyroZ.getViewport().setMaxX(currGesture[gestureIdx].mGyroZ.size());
+        graphGyroZ.getViewport().setMaxX(gestures[gestureIdx].mGyroZ.size());
         // Add the new series to the graph
         graphGyroZ.addSeries(seriesZ);
+
+        chckBoxCop.setChecked(gestures[gestureIdx].isCop());
+        chckBoxHungry.setChecked(gestures[gestureIdx].isHungry());
+        chckBoxHeadache.setChecked(gestures[gestureIdx].isHeadache());
+        chckBoxAbout.setChecked(gestures[gestureIdx].isAbout());
     }
 
     private void predict(){
-        
+        boolean isPos;
+        int selGestureType;
+        int total = 0, tp=0, fp=0;
+
+        View selectedRadioButton = findViewById(radioGroup.getCheckedRadioButtonId());
+        selGestureType = radioGroup.indexOfChild(selectedRadioButton);
+
+        if(selGestureType == -1) {
+            Toast.makeText(MainActivity.this, "Please select gesture type!", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        for(int i=0; i< NUM_GESTURE_SAMPLES; i++){
+            int predictedGesture;
+            if(gestures[i] == null)
+                continue;
+            total++;
+
+            switch(selGestureType){
+                case Gesture.GESTURE_TYPE_ABOUT:
+                    isPos = gestures[i].isAbout();
+                    Toast.makeText(MainActivity.this, "Detect About!", Toast.LENGTH_LONG).show();
+                    break;
+                case Gesture.GESTURE_TYPE_HUNGRY:
+                    isPos = gestures[i].isHungry();
+                    Toast.makeText(MainActivity.this, "Detect Hungry!", Toast.LENGTH_LONG).show();
+                    break;
+                case Gesture.GESTURE_TYPE_HEADACHE:
+                    isPos = gestures[i].isHeadache();
+                    Toast.makeText(MainActivity.this, "Detect Headache!", Toast.LENGTH_LONG).show();
+                    break;
+                case Gesture.GESTURE_TYPE_COP:
+                    isPos = gestures[i].isCop();
+                    Toast.makeText(MainActivity.this, "Detect Cop!", Toast.LENGTH_LONG).show();
+                    break;
+                default :
+                    isPos = false;
+            }
+            if(isPos) {
+                if(gestures[i].mgestureType == Gesture.GESTURE_TYPE_ABOUT)
+                    tp++;
+                else
+                    fp++;
+            }
+        }
+
+        txtViewTruePos.setText("TP: " + String.format("%.2f", tp*100.0/total) + "%");
+        txtViewFalsePos.setText("FP: " + String.format("%.2f", fp*100.0/total) + "%");
     }
+
 }
 

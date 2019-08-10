@@ -9,7 +9,7 @@
     tools:showIn="@layout/activity_main">
 
     <Button
-        android:id="@+id/startButtonID"
+        android:id="@+id/CollectBtnID"
         android:layout_width="75dp"
         android:layout_height="36dp"
         android:layout_marginStart="20dp"
@@ -27,7 +27,7 @@
         android:backgroundTint="#E91E63"
         android:text="Stop"
         app:layout_constraintStart_toEndOf="@+id/sexRdoGrp"
-        app:layout_constraintTop_toBottomOf="@+id/startButtonID" />
+        app:layout_constraintTop_toBottomOf="@+id/CollectBtnID" />
 
     <RadioGroup
         android:id="@+id/sexRdoGrp"
@@ -135,7 +135,7 @@
         android:text="Upload to DB"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.521"
-        app:layout_constraintStart_toEndOf="@+id/startButtonID"
+        app:layout_constraintStart_toEndOf="@+id/CollectBtnID"
         tools:layout_editor_absoluteY="-5dp" />
 
     <Button

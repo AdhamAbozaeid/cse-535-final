@@ -10,4 +10,6 @@
     <string name="btn_collect">Collect</string>
     <string name="btn_predict">Predict</string>
     <string name="txt_sampleID">Sample 1</string>
+    <string name="txt_TruePos">TP: </string>
+    <string name="txt_FalsePos">FP: </string>
 </resources>
