@@ -276,38 +276,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     public void onSensorChanged(SensorEvent sensorEvent) {
-        // TODO Auto-generated method stub
         Sensor mySensor = sensorEvent.sensor;
         if (mySensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            long currTimestampsys = System.currentTimeMillis();
-            long currTimestamp = sensorEvent.timestamp;
-
-            if (currTimestampsys - lastSampleTime < 1000)
-                return;
-
-            lastSampleTime = currTimestampsys;
-
-  /*          if(index < HR_ARR_LEN) {
-                accelValuesX[index] = sensorEvent.values[0];
-                accelValuesY[index] = sensorEvent.values[1];
-                accelValuesZ[index] = sensorEvent.values[2];
-                timestamps[index] = currTimestamp;
-                index++;
-            }
-            else{
-                for (int i = 0; i < HR_ARR_LEN - 1; i++){
-                    accelValuesX[i] = accelValuesX[i+1];
-                    accelValuesY[i] = accelValuesY[i+1];
-                    accelValuesZ[i] = accelValuesZ[i+1];
-                    timestamps[i] = timestamps[i+1];
-                }
-                accelValuesX[index-1] = sensorEvent.values[0];
-                accelValuesY[index-1] = sensorEvent.values[1];
-                accelValuesZ[index-1] = sensorEvent.values[2];
-                timestamps[index-1] = currTimestamp;
-            }*/
-        } else if(mySensor.getType() == Sensor.TYPE_GYROSCOPE) {
             gestures[gestureIdx].addAccelSample(sensorEvent.values[0], sensorEvent.values[1],sensorEvent.values[2]);
+        } else if(mySensor.getType() == Sensor.TYPE_GYROSCOPE) {
+            gestures[gestureIdx].addGyroSample(sensorEvent.values[0], sensorEvent.values[1],sensorEvent.values[2]);
         }
     }
 
@@ -361,6 +334,33 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         graphGyroZ.getViewport().setMaxX(gestures[gestureIdx].mGyroZ.size());
         // Add the new series to the graph
         graphGyroZ.addSeries(seriesZ);
+
+        seriesX = new LineGraphSeries<>();
+        seriesY = new LineGraphSeries<>();
+        seriesZ = new LineGraphSeries<>();
+
+        // Build new series for the updated hrValues
+        for(int i = 0; i< gestures[gestureIdx].mAccelX.size(); i++) {
+            seriesX.appendData(new DataPoint(i, gestures[gestureIdx].mAccelX.get(i)), true, gestures[gestureIdx].mAccelX.size());
+            seriesY.appendData(new DataPoint(i, gestures[gestureIdx].mAccelY.get(i)), true, gestures[gestureIdx].mAccelY.size());
+            seriesZ.appendData(new DataPoint(i, gestures[gestureIdx].mAccelZ.get(i)), true, gestures[gestureIdx].mAccelZ.size());
+        }
+
+        // Update the X axis range
+        graphX.getViewport().setMinX(0);
+        graphX.getViewport().setMaxX(gestures[gestureIdx].mAccelX.size());
+        // Add the new series to the graph
+        graphX.addSeries(seriesX);
+
+        graphY.getViewport().setMinX(0);
+        graphY.getViewport().setMaxX(gestures[gestureIdx].mAccelY.size());
+        // Add the new series to the graph
+        graphY.addSeries(seriesY);
+
+        graphZ.getViewport().setMinX(0);
+        graphZ.getViewport().setMaxX(gestures[gestureIdx].mAccelZ.size());
+        // Add the new series to the graph
+        graphZ.addSeries(seriesZ);
 
         chckBoxCop.setChecked(gestures[gestureIdx].isCop());
         chckBoxHungry.setChecked(gestures[gestureIdx].isHungry());
