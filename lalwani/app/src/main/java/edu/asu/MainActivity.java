@@ -26,6 +26,8 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import java.util.Collections;
+
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
     public static int HR_ARR_LEN = 10;
     public static int MAX_HR = 20;
@@ -322,16 +324,22 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         // Update the X axis range
         graphGyroX.getViewport().setMinX(0);
         graphGyroX.getViewport().setMaxX(gestures[gestureIdx].mGyroX.size());
+        graphGyroX.getViewport().setMinY(Collections.min(gestures[gestureIdx].mGyroX));
+        graphGyroX.getViewport().setMaxY(Collections.max(gestures[gestureIdx].mGyroX));
         // Add the new series to the graph
         graphGyroX.addSeries(seriesX);
 
         graphGyroY.getViewport().setMinX(0);
         graphGyroY.getViewport().setMaxX(gestures[gestureIdx].mGyroY.size());
+        graphGyroY.getViewport().setMinY(Collections.min(gestures[gestureIdx].mGyroY));
+        graphGyroY.getViewport().setMaxY(Collections.max(gestures[gestureIdx].mGyroY));
         // Add the new series to the graph
         graphGyroY.addSeries(seriesY);
 
         graphGyroZ.getViewport().setMinX(0);
         graphGyroZ.getViewport().setMaxX(gestures[gestureIdx].mGyroZ.size());
+        graphGyroZ.getViewport().setMinY(Collections.min(gestures[gestureIdx].mGyroZ));
+        graphGyroZ.getViewport().setMaxY(Collections.max(gestures[gestureIdx].mGyroZ));
         // Add the new series to the graph
         graphGyroZ.addSeries(seriesZ);
 
@@ -349,16 +357,22 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         // Update the X axis range
         graphX.getViewport().setMinX(0);
         graphX.getViewport().setMaxX(gestures[gestureIdx].mAccelX.size());
+        graphX.getViewport().setMinY(Collections.min(gestures[gestureIdx].mAccelX));
+        graphX.getViewport().setMaxY(Collections.max(gestures[gestureIdx].mAccelX));
         // Add the new series to the graph
         graphX.addSeries(seriesX);
 
         graphY.getViewport().setMinX(0);
         graphY.getViewport().setMaxX(gestures[gestureIdx].mAccelY.size());
+        graphY.getViewport().setMinY(Collections.min(gestures[gestureIdx].mAccelY));
+        graphY.getViewport().setMaxY(Collections.max(gestures[gestureIdx].mAccelY));
         // Add the new series to the graph
         graphY.addSeries(seriesY);
 
         graphZ.getViewport().setMinX(0);
         graphZ.getViewport().setMaxX(gestures[gestureIdx].mAccelZ.size());
+        graphZ.getViewport().setMinY(Collections.min(gestures[gestureIdx].mAccelZ));
+        graphZ.getViewport().setMaxY(Collections.max(gestures[gestureIdx].mAccelZ));
         // Add the new series to the graph
         graphZ.addSeries(seriesZ);
 
