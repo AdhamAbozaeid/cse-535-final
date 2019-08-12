@@ -250,9 +250,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public void stopGraph() {
         accelManage.unregisterListener(this);
 
-        graphX.removeAllSeries();
-        graphY.removeAllSeries();
-        graphZ.removeAllSeries();
         showSampleData();
     }
 
@@ -298,6 +295,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         LineGraphSeries<DataPoint> seriesZ = new LineGraphSeries<>();
 
         // Clear the graph
+        graphX.removeAllSeries();
+        graphY.removeAllSeries();
+        graphZ.removeAllSeries();
         graphGyroX.removeAllSeries();
         graphGyroY.removeAllSeries();
         graphGyroZ.removeAllSeries();
