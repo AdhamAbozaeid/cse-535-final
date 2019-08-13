@@ -78,6 +78,12 @@ public class Gesture{
     }
 
     public boolean isCop(){
+        int zeroCrossing = getZeroCrossing(mAccelZ);
+        if(zeroCrossing >=3){
+            if(Collections.max(mAccelZ) > 5  &&  Collections.min(mAccelZ) < -15){
+                return true;
+            }
+        }
         return false;
     }
 
