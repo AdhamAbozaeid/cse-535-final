@@ -250,16 +250,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         gestures[gestureIdx] = new Gesture(gestureType);
         Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         v.vibrate(500);
-        accelManage.registerListener(MainActivity.this, senseAccel, /*accelManage.SENSOR_DELAY_NORMAL*/SensorManager.SENSOR_DELAY_NORMAL);
-        accelManage.registerListener(MainActivity.this, senseGyro, /*accelManage.SENSOR_DELAY_NORMAL*/SensorManager.SENSOR_DELAY_NORMAL);
+        accelManage.registerListener(MainActivity.this, senseAccel, /*accelManage.SENSOR_DELAY_NORMAL*/SensorManager.SENSOR_DELAY_GAME);
+        accelManage.registerListener(MainActivity.this, senseGyro, /*accelManage.SENSOR_DELAY_NORMAL*/SensorManager.SENSOR_DELAY_GAME);
     }
 
     public void stopGraph() {
         accelManage.unregisterListener(this);
 
-        graphX.removeAllSeries();
-        graphY.removeAllSeries();
-        graphZ.removeAllSeries();
         showSampleData();
     }
 
@@ -305,6 +302,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         LineGraphSeries<DataPoint> seriesZ = new LineGraphSeries<>();
 
         // Clear the graph
+        graphX.removeAllSeries();
+        graphY.removeAllSeries();
+        graphZ.removeAllSeries();
         graphGyroX.removeAllSeries();
         graphGyroY.removeAllSeries();
         graphGyroZ.removeAllSeries();
