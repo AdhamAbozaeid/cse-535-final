@@ -33,6 +33,7 @@ public class DTW {
 
 		for (int i = 0; i < n; i++) {
 			for (int j = 0; j < m; j++) {
+
 				d[i][j] = distanceBetween(seq1[i], seq2[j]);
 			}
 		}
