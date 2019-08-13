@@ -7,6 +7,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.view.View;
@@ -113,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         collectBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                collectData(v);
+                startCollectTask();
             }
         });
 
@@ -227,16 +228,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         System.out.println(dtw);
     }
 
-    public void collectData(View view) {
-
-        if(isRunning) {
-            stopGraph();
-            isRunning = false;
-            collectBtn.setText("Collect");
-            return;
-        }
+    public void startCollectTask(){
         int gestureType = -1;
-
         View selectedRadioButton = findViewById(radioGroup.getCheckedRadioButtonId());
         gestureType = radioGroup.indexOfChild(selectedRadioButton);
 
@@ -245,8 +238,20 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             return;
         }
 
+        if(isRunning)
+            return;
+
+        collectBtn.setEnabled(false);
+        CollectTask task = new CollectTask();
+        task.execute(new String[]{""});
+    }
+
+    public void startCollect() {
+        int gestureType = -1;
+        View selectedRadioButton = findViewById(radioGroup.getCheckedRadioButtonId());
+        gestureType = radioGroup.indexOfChild(selectedRadioButton);
+
         isRunning = true;
-        collectBtn.setText("Stop");
         gestures[gestureIdx] = new Gesture(gestureType);
         Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         v.vibrate(500);
@@ -254,9 +259,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         accelManage.registerListener(MainActivity.this, senseGyro, /*accelManage.SENSOR_DELAY_NORMAL*/SensorManager.SENSOR_DELAY_GAME);
     }
 
-    public void stopGraph() {
+    public void stopCollect() {
         accelManage.unregisterListener(this);
-
+        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        v.vibrate(500);
+        isRunning = false;
+        collectBtn.setEnabled(true);
         showSampleData();
     }
 
@@ -444,5 +452,24 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
 
-}
+    private class CollectTask extends AsyncTask<String, Void, Boolean>{
 
+        @Override
+        protected Boolean doInBackground (String...params) {
+            try {
+                Thread.sleep(2 * 1000);
+                startCollect();
+                Thread.sleep(2 * 1000);
+                return true;
+
+            } catch (Exception e) {
+            }
+            return true;
+        }
+        @Override
+        protected void onPostExecute (Boolean param) {
+            super.onPostExecute(param);
+            stopCollect();
+        }
+    }
+}
