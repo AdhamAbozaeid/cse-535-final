@@ -10,6 +10,9 @@ public class Gesture{
     ArrayList<Float> mAccelX;
     ArrayList<Float> mAccelY;
     ArrayList<Float> mAccelZ;
+    ArrayList<Float> mRotX;
+    ArrayList<Float> mRotY;
+    ArrayList<Float> mRotZ;
     final static int GESTURE_TYPE_COP = 0;
     final static int GESTURE_TYPE_HUNGRY = 1;
     final static int GESTURE_TYPE_HEADACHE = 2;
@@ -24,6 +27,9 @@ public class Gesture{
         mAccelX = new ArrayList<Float>();
         mAccelY = new ArrayList<Float>();
         mAccelZ = new ArrayList<Float>();
+        mRotX = new ArrayList<Float>();
+        mRotY = new ArrayList<Float>();
+        mRotZ = new ArrayList<Float>();
     }
 
     public void clearSamples() {
@@ -33,7 +39,11 @@ public class Gesture{
         mAccelX.clear();
         mAccelY.clear();
         mAccelZ.clear();
+        mRotX.clear();
+        mRotY.clear();
+        mRotZ.clear();
     }
+
     public void addGyroSample(float x, float y, float z) {
         mGyroX.add(x);
         mGyroY.add(y);
@@ -44,6 +54,12 @@ public class Gesture{
         mAccelX.add(x);
         mAccelY.add(y);
         mAccelZ.add(z);
+    }
+
+    public void addRotSample(float x, float y, float z) {
+        mRotX.add(x);
+        mRotY.add(y);
+        mRotZ.add(z);
     }
 
     public boolean isAbout(){

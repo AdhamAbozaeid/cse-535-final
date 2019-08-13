@@ -49,6 +49,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     GraphView graphGyroY;
     GraphView graphGyroZ;
 
+    GraphView graphRotX;
+    GraphView graphRotY;
+    GraphView graphRotZ;
+
     Gesture gestures[] = new Gesture[NUM_GESTURE_SAMPLES];
     int gestureIdx = 0;
 
@@ -70,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private SensorManager accelManage;
     private Sensor senseAccel;
     private Sensor senseGyro;
+    private Sensor senseRot;
     float accelValuesX[] = new float[HR_ARR_LEN];
     float accelValuesY[] = new float[HR_ARR_LEN];
     float accelValuesZ[] = new float[HR_ARR_LEN];
@@ -217,11 +222,48 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         //Axis Lavbels for Graph 3 (Timestamp vs Z-axis)
         graphGyroZ.getGridLabelRenderer().setHorizontalAxisTitle("\nTime (sec)");
         graphGyroZ.getGridLabelRenderer().setVerticalAxisTitle("Gyro Z-values");
+
+        // Set maximum x and y axis values for Graph 1
+
+        graphRotX = (GraphView) findViewById(R.id.graphRotX);
+        graphRotX.getViewport().setMaxY(MAX_HR);
+        graphRotX.getViewport().setMinY(-1*(MAX_HR));
+        graphRotX.getViewport().setYAxisBoundsManual(true);
+        graphRotX.getViewport().setMaxX(HR_ARR_LEN);
+        graphRotX.getViewport().setXAxisBoundsManual(true);
+
+        // Set maximum x and y axis values for Graph 2
+        graphRotY = (GraphView) findViewById(R.id.graphRotY);
+        graphRotY.getViewport().setMaxY(MAX_HR);
+        graphRotY.getViewport().setMinY(-1*(MAX_HR));
+        graphRotY.getViewport().setYAxisBoundsManual(true);
+        graphRotY.getViewport().setMaxX(HR_ARR_LEN);
+        graphRotY.getViewport().setXAxisBoundsManual(true);
+
+        // Set maximum x and y axis values for Graph 3
+        graphRotZ = (GraphView) findViewById(R.id.graphRotZ);
+        graphRotZ.getViewport().setMaxY(MAX_HR);
+        graphRotZ.getViewport().setMinY(-1*(MAX_HR));
+        graphRotZ.getViewport().setYAxisBoundsManual(true);
+        graphRotZ.getViewport().setMaxX(HR_ARR_LEN);
+        graphRotZ.getViewport().setXAxisBoundsManual(true);
+
+        // Set Axis Labels
+        graphRotX.getGridLabelRenderer().setHorizontalAxisTitle("\nTime (sec)");
+        graphRotX.getGridLabelRenderer().setVerticalAxisTitle("Rot X-values");
+
+        //Axis Lavbels for Graph 2 (Timestamp vs Y-axis)
+        graphRotY.getGridLabelRenderer().setHorizontalAxisTitle("\nTime (sec)");
+        graphRotY.getGridLabelRenderer().setVerticalAxisTitle("Rot Y-values");
+
+        //Axis Lavbels for Graph 3 (Timestamp vs Z-axis)
+        graphRotZ.getGridLabelRenderer().setHorizontalAxisTitle("\nTime (sec)");
+        graphRotZ.getGridLabelRenderer().setVerticalAxisTitle("Rot Z-values");
         
         accelManage = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         senseAccel = accelManage.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         senseGyro = accelManage.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-        //senseGyro = accelManage.getDefaultSensor(Sensor.TYPE_ROTATION);
+        senseRot = accelManage.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR);
 
         float[] n2 = {1.5f, 3.9f, 4.1f, 3.3f};
         //float[] n2 = {2.1f, 2.45f, 3.673f, 4.32f, 2.05f, 1.93f, 5.67f, 6.01f};
@@ -271,6 +313,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         v.vibrate(500);
         accelManage.registerListener(MainActivity.this, senseAccel, /*accelManage.SENSOR_DELAY_NORMAL*/SensorManager.SENSOR_DELAY_GAME);
         accelManage.registerListener(MainActivity.this, senseGyro, /*accelManage.SENSOR_DELAY_NORMAL*/SensorManager.SENSOR_DELAY_GAME);
+        accelManage.registerListener(MainActivity.this, senseRot, /*accelManage.SENSOR_DELAY_NORMAL*/SensorManager.SENSOR_DELAY_GAME);
     }
 
     public void stopCollect() {
@@ -309,6 +352,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             gestures[gestureIdx].addAccelSample(sensorEvent.values[0], sensorEvent.values[1],sensorEvent.values[2]);
         } else if(mySensor.getType() == Sensor.TYPE_GYROSCOPE) {
             gestures[gestureIdx].addGyroSample(sensorEvent.values[0], sensorEvent.values[1],sensorEvent.values[2]);
+        } else if(mySensor.getType() == Sensor.TYPE_GAME_ROTATION_VECTOR) {
+            gestures[gestureIdx].addRotSample(sensorEvent.values[0], sensorEvent.values[1],sensorEvent.values[2]);
         }
     }
 
@@ -330,6 +375,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         graphGyroX.removeAllSeries();
         graphGyroY.removeAllSeries();
         graphGyroZ.removeAllSeries();
+        graphRotX.removeAllSeries();
+        graphRotY.removeAllSeries();
+        graphRotZ.removeAllSeries();
 
         txtViewSampleID.setText("Sample " + (gestureIdx+1));
         if(gestures[gestureIdx] == null) {
@@ -404,6 +452,39 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         graphZ.getViewport().setMaxY(Collections.max(gestures[gestureIdx].mAccelZ));
         // Add the new series to the graph
         graphZ.addSeries(seriesZ);
+
+        seriesX = new LineGraphSeries<>();
+        seriesY = new LineGraphSeries<>();
+        seriesZ = new LineGraphSeries<>();
+
+        // Build new series for the updated hrValues
+        for(int i = 0; i< gestures[gestureIdx].mRotX.size(); i++) {
+            seriesX.appendData(new DataPoint(i, gestures[gestureIdx].mRotX.get(i)), true, gestures[gestureIdx].mRotX.size());
+            seriesY.appendData(new DataPoint(i, gestures[gestureIdx].mRotY.get(i)), true, gestures[gestureIdx].mRotY.size());
+            seriesZ.appendData(new DataPoint(i, gestures[gestureIdx].mRotZ.get(i)), true, gestures[gestureIdx].mRotZ.size());
+        }
+
+        // Update the X axis range
+        graphRotX.getViewport().setMinX(0);
+        graphRotX.getViewport().setMaxX(gestures[gestureIdx].mRotX.size());
+        graphRotX.getViewport().setMinY(Collections.min(gestures[gestureIdx].mRotX));
+        graphRotX.getViewport().setMaxY(Collections.max(gestures[gestureIdx].mRotX));
+        // Add the new series to the graph
+        graphRotX.addSeries(seriesX);
+
+        graphRotY.getViewport().setMinX(0);
+        graphRotY.getViewport().setMaxX(gestures[gestureIdx].mRotY.size());
+        graphRotY.getViewport().setMinY(Collections.min(gestures[gestureIdx].mRotY));
+        graphRotY.getViewport().setMaxY(Collections.max(gestures[gestureIdx].mRotY));
+        // Add the new series to the graph
+        graphRotY.addSeries(seriesY);
+
+        graphRotZ.getViewport().setMinX(0);
+        graphRotZ.getViewport().setMaxX(gestures[gestureIdx].mRotZ.size());
+        graphRotZ.getViewport().setMinY(Collections.min(gestures[gestureIdx].mRotZ));
+        graphRotZ.getViewport().setMaxY(Collections.max(gestures[gestureIdx].mRotZ));
+        // Add the new series to the graph
+        graphRotZ.addSeries(seriesZ);
 
         chckBoxCop.setChecked(gestures[gestureIdx].isCop());
         chckBoxHungry.setChecked(gestures[gestureIdx].isHungry());
