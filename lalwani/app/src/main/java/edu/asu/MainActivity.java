@@ -1,7 +1,9 @@
 package edu.asu;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -241,9 +243,21 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if(isRunning)
             return;
 
+        AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(this);
+        dlgAlert.setPositiveButton("Ok",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        CollectTask task = new CollectTask();
+                        task.execute(new String[]{""});
+                    }
+                });
+        dlgAlert.setMessage("Please place the phone in the start position in 2 seconds.\n"+
+                "When the phone vibrates, start the gesture, and when done, keep still at the start position till the phone vibrates again\n"+
+                " YOu have 2 seconds to complete the gesture");
+        dlgAlert.setTitle("Instructions");
+        dlgAlert.create().show();
+
         collectBtn.setEnabled(false);
-        CollectTask task = new CollectTask();
-        task.execute(new String[]{""});
     }
 
     public void startCollect() {
