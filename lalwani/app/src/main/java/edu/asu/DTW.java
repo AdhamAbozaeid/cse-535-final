@@ -25,9 +25,9 @@ public class DTW {
                 System.out.println(n);
                 System.out.println(m);
                 K = 1;
-	                warpingPath = new int[n + m][2];        // max(n, m) <= K < n + m
+                warpingPath = new int[n + m][2];        // max(n, m) <= K < n + m
                 warpingDistance = 0.0;
-	                this.compute();
+                this.compute();
 	        }
 
 	        public void compute() {
