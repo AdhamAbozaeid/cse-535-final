@@ -1,7 +1,10 @@
 package edu.asu;
 
 
+import android.util.Log;
+
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Gesture{
     ArrayList<Float> mGyroX;
@@ -13,10 +16,10 @@ public class Gesture{
     ArrayList<Float> mRotX;
     ArrayList<Float> mRotY;
     ArrayList<Float> mRotZ;
-    final static int GESTURE_TYPE_COP = 0;
+    final static int GESTURE_TYPE_ABOUT = 0;
     final static int GESTURE_TYPE_HUNGRY = 1;
     final static int GESTURE_TYPE_HEADACHE = 2;
-    final static int GESTURE_TYPE_ABOUT = 3;
+    final static int GESTURE_TYPE_COP = 3;
     public int mgestureType;
 
     public Gesture(int gestureType){
@@ -63,20 +66,50 @@ public class Gesture{
     }
 
     public boolean isAbout(){
-        return true;
+        int zeroCrossing = getZeroCrossing(mRotY);
+        if(zeroCrossing >= 2) {
+            float gyroPeak2Peak = getPeak2Peak(mGyroY);
+            Log.d("About Predict", "zerocrossing: "+zeroCrossing+" gyro Peak2Peak: " + gyroPeak2Peak);
+            if ( gyroPeak2Peak < 15 && gyroPeak2Peak > 2)
+                return true;
+        }
+        Log.d("About Predict", "zerocrossing: "+zeroCrossing);
+        return false;
     }
 
     public boolean isCop(){
-        return true;
+        return false;
     }
 
-    public boolean isHungry(){
-
-        return true;
+    public boolean isHungry() {
+        return false;
     }
 
     public boolean isHeadache(){
-        return true;
+        int zeroCrossing = getZeroCrossing(mRotY);
+        if (zeroCrossing >= 2) {
+            float gyroPeak2Peak = getPeak2Peak(mGyroY);
+            Log.d("Hungry Predict", "zerocrossing: " + zeroCrossing + " gyro Peak2Peak: " + gyroPeak2Peak);
+            if (gyroPeak2Peak >15)
+                return true;
+        }
+        Log.d("Hungry Predict", "zerocrossing: " + zeroCrossing);
+        return false;
     }
 
+    private int getZeroCrossing(ArrayList<Float> samples){
+        int zeroCrossingUp = 0, zeroCrossingDown = 0;
+
+        for(int i=1; i < samples.size(); i++)
+        {
+            if(samples.get(i-1) < 0 && samples.get(i) > 0)
+                zeroCrossingUp++;
+            if(samples.get(i-1) > 0 && samples.get(i) < 0)
+                zeroCrossingDown++;
+        }
+        return zeroCrossingUp + zeroCrossingDown;
+    }
+    private float getPeak2Peak(ArrayList<Float> samples) {
+        return Collections.max(samples) - Collections.min(samples);
+    }
 }

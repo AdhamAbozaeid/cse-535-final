@@ -12,6 +12,7 @@ import android.hardware.SensorManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -92,9 +93,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         txtViewTruePos = (TextView)findViewById(R.id.txtViewTP);
         txtViewFalsePos = (TextView)findViewById(R.id.txtViewFP);
         radioGroup = (RadioGroup)findViewById(R.id.radioGroup);
-        radioBtnCop = (RadioButton) findViewById(R.id.radioBtnCop);
+        radioBtnCop = (RadioButton) findViewById(R.id.radioBtnAbout);
         radioBtnHungry = (RadioButton) findViewById(R.id.radioBtnHungry);
-        radioBtnAbout = (RadioButton) findViewById(R.id.radioBtnAbout);
+        radioBtnAbout = (RadioButton) findViewById(R.id.radioBtnCop);
         radioBtnHeadache = (RadioButton) findViewById(R.id.radioBtnHeadache);
         chckBoxCop = (CheckBox) findViewById(R.id.chckBoxCop);
         chckBoxHungry = (CheckBox) findViewById(R.id.chckBoxHungry);
@@ -291,6 +292,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     public void onClick(DialogInterface dialog, int which) {
                         CollectTask task = new CollectTask();
                         task.execute(new String[]{""});
+                        collectBtn.setEnabled(false);
                     }
                 });
         dlgAlert.setMessage("Please place the phone in the start position in 2 seconds.\n"+
@@ -298,8 +300,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 " YOu have 2 seconds to complete the gesture");
         dlgAlert.setTitle("Instructions");
         dlgAlert.create().show();
-
-        collectBtn.setEnabled(false);
     }
 
     public void startCollect() {
@@ -495,7 +495,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private void predict(){
         boolean isPos;
         int selGestureType;
-        int total = 0, tp=0, fp=0;
+        int total = 0, tp=0, fp=0, actualPos=0, actualNeg=0;
 
         View selectedRadioButton = findViewById(radioGroup.getCheckedRadioButtonId());
         selGestureType = radioGroup.indexOfChild(selectedRadioButton);
@@ -511,8 +511,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 continue;
             total++;
             //temporary should be removed
-            System.out.println("Size of "+i);
-            System.out.println(gestures[i].mAccelX.size());
+            Log.d("About Predict","Predicting sample "+i);
 
             switch(selGestureType){
                 case Gesture.GESTURE_TYPE_ABOUT:
@@ -534,16 +533,20 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 default :
                     isPos = false;
             }
+            if(gestures[i].mgestureType == selGestureType)
+                actualPos++;
+            else
+                actualNeg++;
             if(isPos) {
-                if(gestures[i].mgestureType == Gesture.GESTURE_TYPE_ABOUT)
+                if(gestures[i].mgestureType == selGestureType)
                     tp++;
                 else
                     fp++;
             }
         }
 
-        txtViewTruePos.setText("TP: " + String.format("%.2f", tp*100.0/total) + "%");
-        txtViewFalsePos.setText("FP: " + String.format("%.2f", fp*100.0/total) + "%");
+        txtViewTruePos.setText("TP: " + String.format("%.2f", tp*100.0/actualPos) + "%");
+        txtViewFalsePos.setText("FP: " + String.format("%.2f", fp*100.0/actualNeg) + "%");
     }
 
 

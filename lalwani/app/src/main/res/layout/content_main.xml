@@ -33,7 +33,7 @@
         android:id="@+id/btnPrev"
         android:layout_width="40dp"
         android:layout_height="35dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="0dp"
         android:layout_marginTop="8dp"
         android:text="@string/btn_prev"
         app:layout_constraintStart_toEndOf="@+id/txtViewSampleId"
@@ -117,7 +117,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.45"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/radioBtnAbout" />
+                app:layout_constraintTop_toBottomOf="@+id/radioBtnCop" />
 
             <com.jjoe64.graphview.GraphView
                 android:id="@+id/graphY"
@@ -242,11 +242,11 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <RadioButton
-            android:id="@+id/radioBtnCop"
+            android:id="@+id/radioBtnAbout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/radio_btn_cop" />
+            android:text="@string/radio_btn_about" />
 
         <RadioButton
             android:id="@+id/radioBtnHungry"
@@ -263,11 +263,11 @@
             android:text="@string/radio_btn_headache" />
 
         <RadioButton
-            android:id="@+id/radioBtnAbout"
+            android:id="@+id/radioBtnCop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/radio_btn_about" />
+            android:text="@string/radio_btn_cop" />
     </RadioGroup>
 
     <TextView
@@ -299,7 +299,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <CheckBox
-        android:id="@+id/chckBoxAbout"
+        android:id="@+id/chckBoxCop"
         android:layout_width="28dp"
         android:layout_height="27dp"
         android:layout_marginTop="60dp"
@@ -317,7 +317,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <CheckBox
-        android:id="@+id/chckBoxCop"
+        android:id="@+id/chckBoxAbout"
         android:layout_width="28dp"
         android:layout_height="27dp"
         android:clickable="false"
