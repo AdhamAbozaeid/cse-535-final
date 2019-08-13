@@ -218,6 +218,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         accelManage = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         senseAccel = accelManage.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         senseGyro = accelManage.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        //senseGyro = accelManage.getDefaultSensor(Sensor.TYPE_ROTATION);
+
+        float[] n2 = {1.5f, 3.9f, 4.1f, 3.3f};
+        //float[] n2 = {2.1f, 2.45f, 3.673f, 4.32f, 2.05f, 1.93f, 5.67f, 6.01f};
+        float[] n1 = {2.1f, 2.45f, 3.673f, 4.32f, 2.05f, 1.93f, 5.67f, 6.01f};
+        DTW dtw = new DTW(n1, n2);
+        System.out.println(dtw);
     }
 
     public void collectData(View view) {
@@ -400,6 +407,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             if(gestures[i] == null)
                 continue;
             total++;
+            //temporary should be removed
+            System.out.println("Size of "+i);
+            System.out.println(gestures[i].mAccelX.size());
 
             switch(selGestureType){
                 case Gesture.GESTURE_TYPE_ABOUT:
@@ -432,6 +442,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         txtViewTruePos.setText("TP: " + String.format("%.2f", tp*100.0/total) + "%");
         txtViewFalsePos.setText("FP: " + String.format("%.2f", fp*100.0/total) + "%");
     }
+
 
 }
 
