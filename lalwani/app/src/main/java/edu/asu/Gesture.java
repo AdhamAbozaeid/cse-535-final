@@ -115,11 +115,11 @@ public class Gesture{
         //System.out.println("fl: "+firstLow+" sl:"+secondLow);
 
         if(zeroCrossing >=3){
-            if(((Collections.max(mAccelZ) >= maxThresh  &&  (firstLow < -2 && secondLow < -2))
+            if(((Collections.max(mAccelZ) >= maxThresh  &&  (firstLow < -3 && secondLow < -3))
                     || (Collections.max(mAccelZ) >= maxThresh  &&  (firstLow < minThresh && secondLow < minThresh))) && (getZeroCrossing(mRotZ)==0)){
 
-                if(Collections.min(mAccelY) <= -7)
-                    return false;
+                //if(Collections.min(mAccelY) <= -7)
+                    //return false;
                 return true;
             }
         }
