@@ -78,8 +78,9 @@ public class Gesture{
     }
 
     public boolean isCop(){
+        if(Collections.max(mAccelZ) <= 2){return false;}
         int zeroCrossing = getZeroCrossing(mAccelZ);
-        int minThresh = -10, maxThresh = 6, zeroLimit = 2, halfMarkIndex = 0;
+        int minThresh = -10, maxThresh = 7, zeroLimit = 2, halfMarkIndex = 0;
 
         float firstLow, secondLow;
         ArrayList<Float> temp = new ArrayList<>();
