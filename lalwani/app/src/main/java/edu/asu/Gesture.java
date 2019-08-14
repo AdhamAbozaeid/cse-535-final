@@ -96,6 +96,7 @@ public class Gesture{
                 break;
             }
         }
+        if(zeroLimit !=0){return false;}
         temp.clear();
         for(int i =0; i < halfMarkIndex;i++){
             temp.add(mAccelZ.get(i));
