@@ -117,6 +117,11 @@ public class Gesture{
         if(zeroCrossing >=3){
             if(((Collections.max(mAccelZ) >= maxThresh  &&  (firstLow < 0 && secondLow < 0))
                     || (Collections.max(mAccelZ) >= maxThresh  &&  (firstLow < minThresh && secondLow < minThresh))) && (getZeroCrossing(mRotZ)==0)){
+
+                int accelYZeroCrossing = getZeroCrossing(mAccelY);
+
+                if(accelYZeroCrossing > 1)
+                    return false;
                 return true;
             }
         }
@@ -129,6 +134,10 @@ public class Gesture{
         float avgZ = getAverage(mRotZ);
         float minX = Collections.min(mRotX);
         float maxX = Collections.max(mRotX);
+        int accelYZeroCrossing = getZeroCrossing(mAccelY);
+
+        if(accelYZeroCrossing < 1)
+            return false;
         //First Case:
         //Check whether Rotation around X-axis and Y-axis is 50 degrees.
         //The values 0.45 to 0.55 here account for noise.
