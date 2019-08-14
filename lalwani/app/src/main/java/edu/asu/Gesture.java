@@ -88,7 +88,28 @@ public class Gesture{
     }
 
     public boolean isHungry() {
+        float avgX = getAverage(mRotX);
+        float avgY = getAverage(mRotY);
+        float avgZ = getAverage(mRotZ);
+        System.out.println("Average is "+avgX);
+        System.out.println("Average is "+avgY);
+        System.out.println("Average is "+avgZ);
+        System.out.println("------------------");
+        if((avgX > 0.45 && avgX < 0.55) && (avgY > -0.55 && avgY < -0.45)) {
+            System.out.println("Hunger Detected");
+            return true;
+        }
+        //System.out.println("round of "+Math.round(avgX));
+        //else if((avgX>0.45 && avgX<0.55) && (avgX>-0.55 && avgX<-0.45))
         return false;
+    }
+    private float getAverage(ArrayList<Float> samples){
+        float sum = 0;
+        float average = 0;
+        for(int i=0; i<samples.size(); i++)
+            sum = sum + samples.get(i);
+        average = sum/samples.size();
+        return average;
     }
 
     public boolean isHeadache(){
