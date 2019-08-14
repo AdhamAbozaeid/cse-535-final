@@ -127,18 +127,27 @@ public class Gesture{
         float avgX = getAverage(mRotX);
         float avgY = getAverage(mRotY);
         float avgZ = getAverage(mRotZ);
-        System.out.println("Average is "+avgX);
-        System.out.println("Average is "+avgY);
-        System.out.println("Average is "+avgZ);
-        System.out.println("------------------");
+        float minX = Collections.min(mRotX);
+        float maxX = Collections.max(mRotX);
+        //First Case:
+        //Check whether Rotation around X-axis and Y-axis is 50 degrees.
+        //The values 0.45 to 0.55 here account for noise.
+        //As there is no filtering algorithm, the values could vary between 0.45 degrees to 0.55
         if((avgX > 0.45 && avgX < 0.55) && (avgY > -0.55 && avgY < -0.45)) {
             System.out.println("Hunger Detected");
             return true;
         }
-        //System.out.println("round of "+Math.round(avgX));
-        //else if((avgX>0.45 && avgX<0.55) && (avgX>-0.55 && avgX<-0.45))
+        //Second Case
+        //The rotation values around X-axis are always between -0.1 and 0.1(zero degrees)
+        //and rotation around Y-axis is greater than 0.65 throughout rotation
+        if(avgY > -0.76 && avgY < -0.65) {
+            if((maxX-minX)<0.2f)
+                System.out.println("Hunger Detected");
+                return true;
+        }
         return false;
     }
+    //Calculate average of given array
     private float getAverage(ArrayList<Float> samples){
         float sum = 0;
         float average = 0;
