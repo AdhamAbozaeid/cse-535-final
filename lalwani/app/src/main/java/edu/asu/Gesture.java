@@ -79,16 +79,42 @@ public class Gesture{
 
     public boolean isCop(){
         int zeroCrossing = getZeroCrossing(mAccelZ);
-        int minThresh = -10, maxThresh = 7;
+        int minThresh = -10, maxThresh = 6, zeroLimit = 2, halfMarkIndex = 0;
+
         float firstLow, secondLow;
         ArrayList<Float> temp = new ArrayList<>();
         temp.addAll(mAccelZ);
-        Collections.sort(temp);
-        firstLow = temp.get(0);
-        secondLow = temp.get(1);
+
+        for(int i = 1; i<temp.size();i++){
+            if(temp.get(i-1) < 0 && temp.get(i) > 0)
+                zeroLimit -= 1;
+            if(temp.get(i-1) > 0 && temp.get(i) < 0)
+                zeroLimit -= 1;
+            if(zeroLimit == 0){
+                halfMarkIndex = i;
+                break;
+            }
+        }
+        temp.clear();
+        for(int i =0; i < halfMarkIndex;i++){
+            temp.add(mAccelZ.get(i));
+        }
+
+        firstLow = Collections.min(temp);
+        temp.clear();
+
+        for(int i =halfMarkIndex; i < mAccelZ.size();i++){
+            temp.add(mAccelZ.get(i));
+        }
+
+        secondLow = Collections.min(temp);
+        temp.clear();
+
+        //System.out.println("fl: "+firstLow+" sl:"+secondLow);
 
         if(zeroCrossing >=3){
-            if((Collections.max(mAccelZ) > maxThresh  &&  Collections.min(mAccelZ) < minThresh) && (getZeroCrossing(mRotZ)==0) && (firstLow < minThresh && secondLow < minThresh)){
+            if(((Collections.max(mAccelZ) >= maxThresh  &&  (firstLow < 0 && secondLow < 0))
+                    || (Collections.max(mAccelZ) >= maxThresh  &&  (firstLow < minThresh && secondLow < minThresh))) && (getZeroCrossing(mRotZ)==0)){
                 return true;
             }
         }
