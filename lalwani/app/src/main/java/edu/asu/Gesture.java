@@ -115,7 +115,7 @@ public class Gesture{
         //System.out.println("fl: "+firstLow+" sl:"+secondLow);
 
         if(zeroCrossing >=3){
-            if(((Collections.max(mAccelZ) >= maxThresh  &&  (firstLow < 0 && secondLow < 0))
+            if(((Collections.max(mAccelZ) >= maxThresh  &&  (firstLow < -4 && secondLow < -4))
                     || (Collections.max(mAccelZ) >= maxThresh  &&  (firstLow < minThresh && secondLow < minThresh))) && (getZeroCrossing(mRotZ)==0)){
 
                 int accelYZeroCrossing = getZeroCrossing(mAccelY);
